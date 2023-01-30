@@ -60,5 +60,4 @@ Yylex(java.io.InputStream s, ErrorMsg e) {
 "="   {return tok(sym.EQ);}
 ":="  {return tok(sym.ASSIGN);}
 ""
-
 . { err("Illegal character: " + yytext()); }
