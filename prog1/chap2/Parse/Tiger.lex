@@ -44,19 +44,55 @@ Yylex(java.io.InputStream s, ErrorMsg e) {
         }
 %eofval}       
 
+%state COMMENT
+%state STRING
+%state IGNORE
 
 %%
-" "	  {}
-\n	  {newline();}
-","	  {return tok(sym.COMMA, null);}
-">"   {return tok(sym.GT);}
-">="  {return tok(sym.GE);}
-"<"   {return tok(sym.LT);}
-"<="  {return tok(sym.LE);}
-"+"   {return tok(sym.PLUS);}
-"-"   {return tok(sym.MINUS);}
-"*"   {return tok(sym.TIMES);}
-"/"   {return tok(sym.DIVIDE);}
-"="   {return tok(sym.EQ);}
-":="  {return tok(sym.ASSIGN);}
+
+<YYINITIAL> " "	  {}
+<YYINITIAL> \n	  {newline();}
+<YYINITIAL> ","	  {return tok(sym.COMMA, null);}
+<YYINITIAL> "int"   {return tok(sym.INT);}
+<YYINITIAL> ">"   {return tok(sym.GT);}
+<YYINITIAL> "/"   {return tok(sym.DIVIDE);}
+<YYINITIAL> ":"   {return tok(sym.COLON);}
+<YYINITIAL> "else" {return tok(sym.ELSE);}
+<YYINITIAL> "|"   {return tok(sym.OR);}
+<YYINITIAL> "nil"   {return tok(sym.NIL);}
+<YYINITIAL> "do"   {return tok(sym.DO);}
+<YYINITIAL> ">="  {return tok(sym.GE);}
+
+<YYINITIAL> "<"   {return tok(sym.LT);}
+<YYINITIAL> "of"  {return tok(sym.OF);}
+<YYINITIAL> "-"   {return tok(sym.MINUS);}
+<YYINITIAL> "array"  {return tok(sym.ARRAY);}
+<YYINITIAL> "type"  {return tok(sym.TYPE);}
+<YYINITIAL> "for"  {return tok(sym.FOR);}
+<YYINITIAL> "to"  {return tok(sym.TO);}
+<YYINITIAL> "*"   {return tok(sym.TIMES);}
+<YYINITIAL> "<="  {return tok(sym.LE);}
+<YYINITIAL> "in"   {return tok(sym.IN);}
+<YYINITIAL> "end"   {return tok(sym.END);}
+<YYINITIAL> ":="  {return tok(sym.ASSIGN);}
+
+<YYINITIAL> "."   {return tok(sym.DOT);}
+<YYINITIAL> "("   {return tok(sym.LPAREN);}
+<YYINITIAL> ")"   {return tok(sym.LPAREN);}
+<YYINITIAL> "if"   {return tok(sym.IF);}
+<YYINITIAL> ";"   {return tok(sym.SEMICOLON);}
+<YYINITIAL> "id"   {return tok(sym.ID); /**/}
+<YYINITIAL> "while"   {return tok(sym.WHILE);}
+<YYINITIAL> "["   {return tok(sym.LBRACK);}
+<YYINITIAL> "]"   {return tok(sym.RBRACK);}
+<YYINITIAL> "<>"   {return tok(sym.NEQ);}
+<YYINITIAL> "var"   {return tok(sym.VAR);}
+<YYINITIAL> "break"   {return tok(sym.BREAK);}
+<YYINITIAL> "&"   {return tok(sym.AND);}
+<YYINITIAL> "+"   {return tok(sym.PLUS);}
+<YYINITIAL> "{"   {return tok(sym.LBRACE);}
+<YYINITIAL> "}"   {return tok(sym.RBRACE);}
+<YYINITIAL> "let"   {return tok(sym.LET);}
+<YYINITIAL> "then"   {return tok(sym.THEN);}
+<YYINITIAL> "="   {return tok(sym.EQ);}
 . { err("Illegal character: " + yytext()); }
