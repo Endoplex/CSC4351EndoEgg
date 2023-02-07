@@ -9,8 +9,6 @@ import ErrorMsg.ErrorMsg;
 %char
 
 %{
-StringBuffer string = new StringBuffer();
-private int lineCount, nestDepth, charCount; 
 
 private void newline() {
   errorMsg.newline(yychar);
@@ -34,6 +32,12 @@ private java_cup.runtime.Symbol tok(int kind, Object value) {
 
 private ErrorMsg errorMsg;
 
+private int nestDepth = 0;
+private StringBuffer sb;
+private java_cup.runtime.Symbol strtok;
+private int linecount;
+
+
 Yylex(java.io.InputStream s, ErrorMsg e) {
   this(s);
   errorMsg=e;
@@ -45,99 +49,104 @@ Yylex(java.io.InputStream s, ErrorMsg e) {
 	{
 	 return tok(sym.EOF, null);
         }
-%eofval}       
+%eofval}     
 
-%state COMMENT
-%state STRING
-%state IGNORE
-num = [0-9]
+%eof{
+  {
+    if(yy_lexical_state == COMMENT)
+    err("Cannot end file in COMMENT state");
+    else if((yy_lexical_state == STRING))
+     err("Cannot end file in STRING state");
+    else if((yy_lexical_state == IGNORE))
+     err("Cannot end file in IGNORE state");
+  }
+%eof}
+
+
+%state COMMENT, STRING, IGNORE
+
+INTNUM = 0|[1-9][0-9]*
+ID = [a-zA-Z][a-z0-9A-Z_]*
+
+TEXT = [^\"|\\|^]+
+CONTROL = "^"[@-_a-z]
+ASCII = \\[0-2][0-9][0-9]
+
+WHITESPACE = [\n\ \t\r\b\012]
 
 %%
 
 <YYINITIAL> " "	  {}
 <YYINITIAL> \n	  {newline();}
-<YYINITIAL> ","	  {return tok(sym.COMMA, null);}
-<YYINITIAL> "int"   {return tok(sym.INT);}
-<YYINITIAL> ">"   {return tok(sym.GT);}
-<YYINITIAL> "/"   {return tok(sym.DIVIDE);}
-<YYINITIAL> ":"   {return tok(sym.COLON);}
-<YYINITIAL> "else" {return tok(sym.ELSE);}
-<YYINITIAL> "|"   {return tok(sym.OR);}
-<YYINITIAL> "nil"   {return tok(sym.NIL);}
-<YYINITIAL> "do"   {return tok(sym.DO);}
-<YYINITIAL> ">="  {return tok(sym.GE);}
 
-<YYINITIAL> "<"   {return tok(sym.LT);}
-<YYINITIAL> "of"  {return tok(sym.OF);}
-<YYINITIAL> "-"   {return tok(sym.MINUS);}
-<YYINITIAL> "array"  {return tok(sym.ARRAY);}
-<YYINITIAL> "type"  {return tok(sym.TYPE);}
-<YYINITIAL> "for"  {return tok(sym.FOR);}
-<YYINITIAL> "to"  {return tok(sym.TO);}
-<YYINITIAL> "*"   {return tok(sym.TIMES);}
-<YYINITIAL> "<="  {return tok(sym.LE);}
-<YYINITIAL> "in"   {return tok(sym.IN);}
-<YYINITIAL> "end"   {return tok(sym.END);}
-<YYINITIAL> ":="  {return tok(sym.ASSIGN);}
-
-<YYINITIAL> "."   {return tok(sym.DOT);}
-<YYINITIAL> "("   {return tok(sym.LPAREN);}
-<YYINITIAL> ")"   {return tok(sym.RPAREN);}
-<YYINITIAL> "if"   {return tok(sym.IF);}
+<YYINITIAL> ","	  {return tok(sym.COMMA);}
 <YYINITIAL> ";"   {return tok(sym.SEMICOLON);}
-<YYINITIAL> "id"   {return tok(sym.ID); /**/}
-<YYINITIAL> "while"   {return tok(sym.WHILE);}
+<YYINITIAL> ":"   {return tok(sym.COLON);}
+<YYINITIAL> ":="  {return tok(sym.ASSIGN);}
+<YYINITIAL> "."   {return tok(sym.DOT);}
+
+<YYINITIAL> "-"   {return tok(sym.MINUS);}
+<YYINITIAL> "+"   {return tok(sym.PLUS);}
+<YYINITIAL> "/"   {return tok(sym.DIVIDE);}
+<YYINITIAL> "*"   {return tok(sym.TIMES);}
+
+<YYINITIAL> "&"   {return tok(sym.AND);}
+<YYINITIAL> "|"   {return tok(sym.OR);}
+<YYINITIAL> ">"   {return tok(sym.GT);}
+<YYINITIAL> ">="  {return tok(sym.GE);}
+<YYINITIAL> "<"   {return tok(sym.LT);}
+<YYINITIAL> "<="  {return tok(sym.LE);}
+<YYINITIAL> "="   {return tok(sym.EQ);}
+<YYINITIAL> "<>"   {return tok(sym.NEQ);}
+
+<YYINITIAL> "("   {return tok(sym.LPAREN);}
+<YYINITIAL> ")"   {return tok(sym.LPAREN);}
 <YYINITIAL> "["   {return tok(sym.LBRACK);}
 <YYINITIAL> "]"   {return tok(sym.RBRACK);}
-<YYINITIAL> "<>"   {return tok(sym.NEQ);}
-<YYINITIAL> "var"   {return tok(sym.VAR);}
-<YYINITIAL> "break"   {return tok(sym.BREAK);}
-<YYINITIAL> "&"   {return tok(sym.AND);}
-<YYINITIAL> "+"   {return tok(sym.PLUS);}
 <YYINITIAL> "{"   {return tok(sym.LBRACE);}
 <YYINITIAL> "}"   {return tok(sym.RBRACE);}
+
+<YYINITIAL> "array"  {return tok(sym.ARRAY);}
+<YYINITIAL> "break"   {return tok(sym.BREAK);}
+<YYINITIAL> "do"   {return tok(sym.DO);}
+<YYINITIAL> "end"   {return tok(sym.END);}
+<YYINITIAL> "else" {return tok(sym.ELSE);}
+<YYINITIAL> "for"  {return tok(sym.FOR);}
+<YYINITIAL> "if"   {return tok(sym.IF);}
+<YYINITIAL> "in"   {return tok(sym.IN);}
 <YYINITIAL> "let"   {return tok(sym.LET);}
+<YYINITIAL> "nil"   {return tok(sym.NIL);}
+<YYINITIAL> "of"  {return tok(sym.OF);}
+<YYINITIAL> "to"  {return tok(sym.TO);}
 <YYINITIAL> "then"   {return tok(sym.THEN);}
-<YYINITIAL> "="   {return tok(sym.EQ);}\
+<YYINITIAL> "typedef"  {return tok(sym.TYPE);}
+<YYINITIAL> "var"   {return tok(sym.VAR);}
+<YYINITIAL> "while"   {return tok(sym.WHILE);}
 
-<YYINITIAL> {NUM} {return tok(yytext());}
+<YYINITIAL> {INTNUM}   {return tok(sym.INT, new Integer(yytext()));}
+<YYINITIAL> {ID}   {return tok(sym.ID, yytext());}
 
-/* COMMENTS
 
-<YYINITIAL> {
-  <COMMENT> {
-    /*    { yybegin(COMMENT); nestDepth = 1; }
-    *       { nestDepth++ }
-    \n      { newline(); }
-    .       {}
-    */    { nestDepth--; if(nestDepth == 0) {yybegin(YYINITIAL)} }
-  }
-}
+<YYINITIAL> "/*" {yybegin(COMMENT); nestDepth = 1;}
+<COMMENT> "/*" {nestDepth++;}
+<COMMENT> \n	  {newline();}
+<COMMENT> . {}
+<COMMENT> "*/" {nestDepth--; if(nestDepth == 0) { yybegin(YYINITIAL); } }
 
-/*
-* WHITESPACE = [\r\n \t\b\012]+ 
-*/
-<YYINITIAL> {
-  <STRING> {  
-    \"    { yybegin(STRING); 
-            StringBuffer string = new StringBuffer(); 
-            return tok(sym.STRING, string.toString()); 
-            lineCount = 1;
-          }
+<YYINITIAL> \" {yybegin(STRING); sb = new StringBuffer();}
+<STRING> \\\" {sb.append(yytext().charAt(1)); System.out.println(sb.toString());}
+<STRING> \\n {sb.append('\n'); System.out.println(sb.toString());}
+<STRING> \\t {sb.append('\t'); System.out.println(sb.toString());}
+<STRING> \\\\ {sb.append(yytext().charAt(1)); System.out.println(sb.toString());}
+<STRING> {CONTROL} {return tok(sym.STRING, yytext());}
+<STRING> {ASCII} {return tok(sym.STRING, yytext());}
+<STRING> \" {yybegin(YYINITIAL);}
+<STRING> {TEXT} {return tok(sym.STRING, yytext());}
 
-    {WHITESPACE}    { string.append(yytext()); lineCount ++; }
-    \\t              { string.append('\t'); }
-    \\\              { string.append('\\'); }  
-    \\\\             { string.append('\\\'); }
-    \\n              { string.append('\n'); lineCount++; }
-    \"               { return tok(sym.STRING, string.toString() ); }
+<STRING> \\{WHITESPACE} {System.out.println("1"); yybegin(IGNORE);}
+<IGNORE> \n {newline();}
+<IGNORE> {WHITESPACE} {}
+<IGNORE> \\ {yybegin(STRING);}
 
-    {CONTROL}       { return tok(sym.STRING, yytext());}
-  }
-  <IGNORE> {
-    \n            {newline();}
-    {WHITESPACE}  {}
-    \\            {yybegin(YYINITIAL);}
-  }
-}
+
 . { err("Illegal character: " + yytext()); }
