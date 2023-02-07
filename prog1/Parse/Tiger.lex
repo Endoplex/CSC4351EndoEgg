@@ -143,15 +143,13 @@ WHITESPACE = [\n\ \t\r\b\012]
 <YYINITIAL> { 
   \" {yybegin(STRING); sb = new StringBuffer();}
   <STRING> { 
-    \\" {sb.append(yytext()); }
-    \\n {sb.append(yytext()); }
-    \\t {sb.append(yytext()); }
-    \\\\ {sb.append(yytext()); }
+    \\n {sb.append(yytext('\\n')); }
+    \\t {sb.append('\\t'); }
     
     {CONTROL} {return tok(sym.STRING, yytext());}
     {ASCII} {System.out.print("debug"); int c = new Integer(yytext().substring(1)); sb.append((char) c); }
-    \" {System.out.print(sb.toString()); yybegin(YYINITIAL); }
     {TEXT} {return tok(sym.STRING, yytext());}
+    \" {System.out.print(sb.toString()); yybegin(YYINITIAL); }
     
     \\ {WHITESPACE} { yybegin(IGNORE);} 
     <IGNORE> {
