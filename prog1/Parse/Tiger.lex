@@ -136,13 +136,13 @@ WHITESPACE = [\n\ \t\r\b\012]
     {TEXT} {return tok(sym.STRING, yytext()); }
     \" {System.out.print(sb.toString()); yybegin(YYINITIAL); }
     
-    "\f" { yybegin(IGNORE);} 
+    "\\f" { yybegin(IGNORE);} 
     <IGNORE> {
       {TEXT} {}
       {ASCII} {}
       {CONTROL} {}
       {WHITESPACE} {}
-      "f\" {yybegin(STRING);}
+      "f\\" {yybegin(STRING);}
     }
 
     "/*" {yybegin(COMMENT); nestDepth = 1;}
