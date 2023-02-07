@@ -151,12 +151,12 @@ WHITESPACE = [\n\ \t\r\b\012]
     {ASCII} {System.out.print("debug"); int c = new Integer(yytext().substring(1)); sb.append((char) c); }
     \" {System.out.print(sb.toString()); yybegin(YYINITIAL); }
     {TEXT} {return tok(sym.STRING, yytext());}
-    \\{WHITESPACE} {System.out.println("1"); yybegin(IGNORE);} 
+    {WHITESPACE} {System.out.println("1"); yybegin(IGNORE);} 
     <IGNORE> {
       \n {newline();}
       {WHITESPACE} {}
       \\ {yybegin(STRING);}
-      }
+    }
   }
 }
 
