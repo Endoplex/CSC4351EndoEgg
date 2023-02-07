@@ -9,6 +9,8 @@ import ErrorMsg.ErrorMsg;
 %char
 
 %{
+StringBuffer() string = new StringBuffer();
+
 private void newline() {
   errorMsg.newline(yychar);
 }
@@ -47,6 +49,7 @@ Yylex(java.io.InputStream s, ErrorMsg e) {
 %state COMMENT
 %state STRING
 %state IGNORE
+num = 0 | [1-9][0-9]*
 
 %%
 
@@ -78,7 +81,7 @@ Yylex(java.io.InputStream s, ErrorMsg e) {
 
 <YYINITIAL> "."   {return tok(sym.DOT);}
 <YYINITIAL> "("   {return tok(sym.LPAREN);}
-<YYINITIAL> ")"   {return tok(sym.LPAREN);}
+<YYINITIAL> ")"   {return tok(sym.RPAREN);}
 <YYINITIAL> "if"   {return tok(sym.IF);}
 <YYINITIAL> ";"   {return tok(sym.SEMICOLON);}
 <YYINITIAL> "id"   {return tok(sym.ID); /**/}
@@ -94,5 +97,21 @@ Yylex(java.io.InputStream s, ErrorMsg e) {
 <YYINITIAL> "}"   {return tok(sym.RBRACE);}
 <YYINITIAL> "let"   {return tok(sym.LET);}
 <YYINITIAL> "then"   {return tok(sym.THEN);}
-<YYINITIAL> "="   {return tok(sym.EQ);}
+<YYINITIAL> "="   {return tok(sym.EQ);}\
+
+<YYINITIAL> {NUM} {return tok(sym.INTEGER_LITERAL);}
+
+<YYINITIAL> {
+  <STRING> {  
+    \"    { yybegin(STRING); return tok(sym.STRING_LITERAL, string.toString()); }
+
+    [^\n\r\"\\]+    { string.append(yytext()); }
+    \\t             { string.append("\t"); }
+    \\r             { string.append("\r"); }
+    \\\"            { string.append('\"'); }
+    \\              { string.append('\\'); }  
+
+    \\n             { string.append('\n'); }
+  }
+}
 . { err("Illegal character: " + yytext()); }
