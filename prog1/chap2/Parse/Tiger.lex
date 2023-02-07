@@ -9,7 +9,6 @@ import ErrorMsg.ErrorMsg;
 %char
 
 %{
-StringBuffer() string = new StringBuffer();
 
 private void newline() {
   errorMsg.newline(yychar);
@@ -49,7 +48,7 @@ Yylex(java.io.InputStream s, ErrorMsg e) {
 %state COMMENT
 %state STRING
 %state IGNORE
-num = 0 | [1-9][0-9]*
+num = [0-9]
 
 %%
 
@@ -99,19 +98,44 @@ num = 0 | [1-9][0-9]*
 <YYINITIAL> "then"   {return tok(sym.THEN);}
 <YYINITIAL> "="   {return tok(sym.EQ);}\
 
-<YYINITIAL> {NUM} {return tok(sym.INTEGER_LITERAL);}
+<YYINITIAL> {NUM} {return tok(yytext());}
+
+\* COMMENTS
 
 <YYINITIAL> {
+  <COMMENT> {
+    "/*"    { yybegin(COMMENT); nestDepth = 1; }
+    *       { nestDepth++ }
+    \n      { newline(); }
+    .       {}
+    "*/"    { nestDepth--; if(nestDepth == 0) {yybegin(YYINITIAL)} }
+  }
+}
+
+/*
+* WHITESPACE = [\r\n \t\b\012]+ 
+*/
+<YYINITIAL> {
   <STRING> {  
-    \"    { yybegin(STRING); return tok(sym.STRING_LITERAL, string.toString()); }
+    \"    { yybegin(STRING); 
+            StringBuffer string = new StringBuffer(); 
+            return tok(sym.STRING, string.toString()); 
+            linecount = 1;
+          }
 
-    [^\n\r\"\\]+    { string.append(yytext()); }
-    \\t             { string.append("\t"); }
-    \\r             { string.append("\r"); }
-    \\\"            { string.append('\"'); }
+    {WHITESPACE}    { string.append(yytext()); linecount ++; }
+    \t              { string.append('\t'); }
+    \"              { string.append('\"'); }
     \\              { string.append('\\'); }  
+    \\\             { string.append('\\\'); }
+    \n              { string.append('\n'); }
 
-    \\n             { string.append('\n'); }
+    {CONTROL}       { return tok(sym.STRING, yytext());}
+  }
+  <IGNORE> {
+    \n            {newline();}
+    {WHITESPACE}  {}
+    \\            {yybegin(YYINITIAL);}
   }
 }
 . { err("Illegal character: " + yytext()); }
