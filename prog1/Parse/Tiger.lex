@@ -131,9 +131,12 @@ WHITESPACE = [\n\ \t\r\b\012]
   "/*" {yybegin(COMMENT); nestDepth = 1;}
   <COMMENT> { 
     "/*" {nestDepth++;}
-    \n	  {newline();}
+    \n	  {newline(); }
     . {}
-    "*/" {nestDepth--; if(nestDepth == 0) { yybegin(YYINITIAL); } }
+    "*/" {  nestDepth--; 
+            if(nestDepth == 0) { yybegin(YYINITIAL); }
+            else if(nestDepth < 0) { err("Illegal closing comment"); }
+          }
   }
 }
 
