@@ -9,6 +9,8 @@ import ErrorMsg.ErrorMsg;
 %char
 
 %{
+StringBuffer string = new StringBuffer();
+private int lineCount, nestDepth, charCount; 
 
 private void newline() {
   errorMsg.newline(yychar);
@@ -104,11 +106,11 @@ num = [0-9]
 
 <YYINITIAL> {
   <COMMENT> {
-    "/*"    { yybegin(COMMENT); nestDepth = 1; }
+    /*    { yybegin(COMMENT); nestDepth = 1; }
     *       { nestDepth++ }
     \n      { newline(); }
     .       {}
-    "*/"    { nestDepth--; if(nestDepth == 0) {yybegin(YYINITIAL)} }
+    */    { nestDepth--; if(nestDepth == 0) {yybegin(YYINITIAL)} }
   }
 }
 
@@ -120,15 +122,15 @@ num = [0-9]
     \"    { yybegin(STRING); 
             StringBuffer string = new StringBuffer(); 
             return tok(sym.STRING, string.toString()); 
-            linecount = 1;
+            lineCount = 1;
           }
 
-    {WHITESPACE}    { string.append(yytext()); linecount ++; }
-    \t              { string.append('\t'); }
-    \"              { string.append('\"'); }
-    \\              { string.append('\\'); }  
-    \\\             { string.append('\\\'); }
-    \n              { string.append('\n'); }
+    {WHITESPACE}    { string.append(yytext()); lineCount ++; }
+    \\t              { string.append('\t'); }
+    \\\              { string.append('\\'); }  
+    \\\\             { string.append('\\\'); }
+    \\n              { string.append('\n'); lineCount++; }
+    \"               { return tok(sym.STRING, string.toString() ); }
 
     {CONTROL}       { return tok(sym.STRING, yytext());}
   }
