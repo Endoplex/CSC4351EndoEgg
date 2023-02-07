@@ -127,15 +127,20 @@ WHITESPACE = [\n\ \t\r\b\012]
 <YYINITIAL> {ID}   {return tok(sym.ID, yytext());}
 
 
-<YYINITIAL> "/*" {yybegin(COMMENT); nestDepth = 1;}
-<COMMENT> "/*" {nestDepth++;}
-<COMMENT> \n	  {newline();}
-<COMMENT> . {}
-<COMMENT> "*/" {nestDepth--; if(nestDepth == 0) { yybegin(YYINITIAL); } }
+<YYINITIAL> {
+  "/*" {yybegin(COMMENT); nestDepth = 1;}
+  <COMMENT> { 
+    "/*" {nestDepth++;}
+    \n	  {newline();}
+    . {}
+    "*/" {nestDepth--; if(nestDepth == 0) { yybegin(YYINITIAL); } }
+  }
+}
 
 <YYINITIAL> { 
   \" {yybegin(STRING); sb = new StringBuffer();}
-  <STRING> { \\\" {sb.append(yytext().charAt(1)); System.out.println(sb.toString());}
+  <STRING> { 
+    \\\" {sb.append(yytext().charAt(1)); System.out.println(sb.toString());}
     \\n {sb.append('\n'); System.out.println(sb.toString());}
     \\t {sb.append('\t'); System.out.println(sb.toString());}
     \\\\ {sb.append(yytext().charAt(1)); System.out.println(sb.toString());}
