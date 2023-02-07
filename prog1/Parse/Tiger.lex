@@ -72,7 +72,7 @@ TEXT = [^\"|\\|^]+
 CONTROL = "^"[@-_a-z]
 ASCII = \\[0-2][0-9][0-9]
 
-WHITESPACE = [\n\ \t\r\b\012\:]
+WHITESPACE = [\n\ \t\r\b\012]
 
 %%
 
