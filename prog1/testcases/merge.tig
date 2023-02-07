@@ -63,6 +63,6 @@ int readint(any: any) {
  in printlist(merge(list1,list2))
  var string := "This is a test \n\\n: \n\\t:\t[]\n\\\\: \\\\"
  var string := "Testing control char:\n\^c: ^c\n\^b: ^b"
- var string := "Testing ignore: \AIOSoifnspdifjs\"
+ var string := "Testing ignore: \fAIOSoifnspdifjsf\"
 end
 
