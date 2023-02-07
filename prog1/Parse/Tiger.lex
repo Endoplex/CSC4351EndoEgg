@@ -140,12 +140,12 @@ WHITESPACE = [\n\ \t\r\b\012]
 <YYINITIAL> { 
   \" {yybegin(STRING); sb = new StringBuffer();}
   <STRING> { 
-    \\\" {sb.append(yytext().charAt(1)); System.out.println(sb.toString());}
+    \\\" {sb.append(yytext().charAt(1)); System.out.print(sb.toString());}
     \\n {sb.append("\\n"); System.out.print(sb.toString());}
     \\t {sb.append("\\t"); System.out.print(sb.toString());}
-    \\\\ {sb.append(yytext().charAt(1)); System.out.println(sb.toString());}
+    \\\\ {sb.append(yytext().charAt(1)); System.out.print(sb.toString());}
     {CONTROL} {return tok(sym.STRING, yytext());}
-    {ASCII} {System.out.println("debug"); int c = new Integer(yytext().substring(1)); sb.append((char) c); System.out.println(sb.toString());}
+    {ASCII} {System.out.print("debug"); int c = new Integer(yytext().substring(1)); sb.append((char) c); System.out.print(sb.toString());}
     \" {yybegin(YYINITIAL);}
     {TEXT} {return tok(sym.STRING, yytext());} 
   }
