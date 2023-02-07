@@ -100,7 +100,7 @@ num = [0-9]
 
 <YYINITIAL> {NUM} {return tok(yytext());}
 
-\* COMMENTS
+/* COMMENTS
 
 <YYINITIAL> {
   <COMMENT> {
