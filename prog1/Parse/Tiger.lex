@@ -71,8 +71,7 @@ ID = [a-zA-Z][a-z0-9A-Z_]*
 TEXT = [^\"|\\|^]+
 CONTROL = "^"[@-_a-z]
 ASCII = \\[0-2][0-9][0-9]
-IGNORESEQ = [\ff\]
-WHITESPACE = [\n\ \t\r\b\012]
+WHITESPACE = [\n\ \t\r\b\012\f]
 
 %%
 
@@ -137,12 +136,12 @@ WHITESPACE = [\n\ \t\r\b\012]
     {TEXT} {return tok(sym.STRING, yytext()); }
     \" {System.out.print(sb.toString()); yybegin(YYINITIAL); }
     
-    "\\f" { yybegin(IGNORE);} 
+    \\ {WHITESPACE} { yybegin(IGNORE);} 
     <IGNORE> {
       \n {}
       {ASCII} {}
       {WHITESPACE} {}
-      "\f\" {yybegin(STRING);}
+      \\ {yybegin(STRING);}
     }
 
     "/*" {yybegin(COMMENT); nestDepth = 1;}
