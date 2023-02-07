@@ -143,19 +143,21 @@ WHITESPACE = [\n\ \t\r\b\012]
 <YYINITIAL> { 
   \" {yybegin(STRING); sb = new StringBuffer();}
   <STRING> { 
-    \\\" {sb.append(yytext()); }
-    \\n {sb.append(yytext()); }
-    \\t {sb.append(yytext()); }
-    \\\\ {sb.append(yytext().charAt(1)); }
+    \\\" {sb.append(yytext()); System.out.print("\\\")}
+    \\n {sb.append(yytext()); System.out.print("\\n")}
+    \\t {sb.append(yytext()); System.out.print("\\t") }
+    \\\\ {sb.append(yytext().charAt(1)); System.out.print("\\\\")}
     {CONTROL} {return tok(sym.STRING, yytext());}
     {ASCII} {System.out.print("debug"); int c = new Integer(yytext().substring(1)); sb.append((char) c); }
     \" {System.out.print(sb.toString()); yybegin(YYINITIAL); }
     {TEXT} {return tok(sym.STRING, yytext());}
     \\{WHITESPACE} {System.out.println("1"); yybegin(IGNORE);} 
+    <IGNORE> {
+      \n {newline();}
+      {WHITESPACE} {}
+      \\ {yybegin(STRING);}
+      }
   }
-  <IGNORE> \n {newline();}
-  <IGNORE> {WHITESPACE} {}
-  <IGNORE> \\ {yybegin(STRING);}
 }
 
 
