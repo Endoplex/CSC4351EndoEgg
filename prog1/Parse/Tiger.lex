@@ -133,15 +133,18 @@ WHITESPACE = [\n\ \t\r\b\012]
 <COMMENT> . {}
 <COMMENT> "*/" {nestDepth--; if(nestDepth == 0) { yybegin(YYINITIAL); } }
 
-<YYINITIAL> \" {yybegin(STRING); sb = new StringBuffer();}
-<STRING> \\\" {sb.append(yytext().charAt(1)); System.out.println(sb.toString());}
-<STRING> \\n {sb.append('\n'); System.out.println(sb.toString());}
-<STRING> \\t {sb.append('\t'); System.out.println(sb.toString());}
-<STRING> \\\\ {sb.append(yytext().charAt(1)); System.out.println(sb.toString());}
-<STRING> {CONTROL} {return tok(sym.STRING, yytext());}
-<STRING> {ASCII} {System.out.println("debug"); int c = new Integer(yytext().substring(1)); sb.append((char) c); System.out.println(sb.toString());}
-<STRING> \" {yybegin(YYINITIAL);}
-<STRING> {TEXT} {return tok(sym.STRING, yytext());}
+<YYINITIAL> { 
+  \" {yybegin(STRING); sb = new StringBuffer();}
+  <STRING> { \\\" {sb.append(yytext().charAt(1)); System.out.println(sb.toString());}
+    \\n {sb.append('\n'); System.out.println(sb.toString());}
+    \\t {sb.append('\t'); System.out.println(sb.toString());}
+    \\\\ {sb.append(yytext().charAt(1)); System.out.println(sb.toString());}
+    {CONTROL} {return tok(sym.STRING, yytext());}
+    {ASCII} {System.out.println("debug"); int c = new Integer(yytext().substring(1)); sb.append((char) c); System.out.println(sb.toString());}
+    \" {yybegin(YYINITIAL);}
+    {TEXT} {return tok(sym.STRING, yytext());} 
+  }
+}
 
 
 <STRING> \\{WHITESPACE} {System.out.println("1"); yybegin(IGNORE);}
