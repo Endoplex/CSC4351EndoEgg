@@ -1,5 +1,5 @@
 let 
-
+ var string := "Hello World"
  typedef {any : int} any
  var buffer := getchar()
 
