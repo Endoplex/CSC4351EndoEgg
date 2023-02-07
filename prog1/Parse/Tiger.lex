@@ -140,7 +140,6 @@ WHITESPACE = [\n\ \t\r\b\012]
     \\ {WHITESPACE} { yybegin(IGNORE);} 
     <IGNORE> {
       \n {}
-      {ASCII} {}
       {WHITESPACE} {}
       \\ {yybegin(STRING);}
     }
