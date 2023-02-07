@@ -133,16 +133,17 @@ WHITESPACE = [\n\ \t\r\b\012]
     \\t {sb.append('\\t'); }
     
     {CONTROL} {return tok(sym.STRING, yytext());}
-    {ASCII} {System.out.print("debug"); int c = new Integer(yytext().substring(1)); sb.append((char) c); }
-    {TEXT} {return tok(sym.STRING, yytext());}
+    {ASCII} { int c = yytext(); sb.append((char) c); }
+    {TEXT} {return tok(sym.STRING, yytext()); }
     \" {System.out.print(sb.toString()); yybegin(YYINITIAL); }
     
     \\ {WHITESPACE} { yybegin(IGNORE);} 
     <IGNORE> {
-      \n {newline();}
+      n {sb.append("\\n");}
       {WHITESPACE} {}
       \\ {yybegin(STRING);}
     }
+
     "/*" {yybegin(COMMENT); nestDepth = 1;}
     <COMMENT> { 
       "/*" {nestDepth++;}
