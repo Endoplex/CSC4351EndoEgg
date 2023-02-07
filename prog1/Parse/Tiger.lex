@@ -149,12 +149,12 @@ WHITESPACE = [\n\ \t\r\b\012\:]
     {TEXT} {return tok(sym.STRING, yytext());}
     \\ {WHITESPACE} { yybegin(IGNORE);} 
     <IGNORE> {
-      \n {newline();}
+      n {newline();}
       {WHITESPACE} {}
-      \\\" {sb.append(yytext()); System.out.print("\\\")}
-      \\n {sb.append(yytext()); System.out.print("\\n")}
-      \\t {sb.append(yytext()); System.out.print("\\t") }
-      \\\\ {sb.append(yytext().charAt(1)); System.out.print("\\\\")}
+      \\" {sb.append(yytext()); System.out.print("\\\")}
+      \n {sb.append(yytext()); System.out.print("\\n")}
+      \t {sb.append(yytext()); System.out.print("\\t") }
+      \\\ {sb.append(yytext().charAt(1)); System.out.print("\\\\")}
       \\ {yybegin(STRING);}
     }
   }
