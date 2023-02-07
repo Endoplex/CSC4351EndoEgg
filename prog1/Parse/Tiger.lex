@@ -139,7 +139,7 @@ WHITESPACE = [\n\ \t\r\b\012]
     
     \\ {WHITESPACE} { yybegin(IGNORE);} 
     <IGNORE> {
-      n {sb.append("\\n");}
+      n {newline(); System.out.print("\\n");}
       {WHITESPACE} {}
       \\ {yybegin(STRING);}
     }
