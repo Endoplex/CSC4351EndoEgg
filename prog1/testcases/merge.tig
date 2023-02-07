@@ -61,6 +61,6 @@ int readint(any: any) {
 
   /* BODY OF MAIN PROGRAM */
  in printlist(merge(list1,list2))
- var string := "This is a test \n\\n: \n\\t: \t[]\n\\\\: \\\\\n\\\: \\\ "
+ var string := "This is a test \n\\n: \n\\t: \t[]\n\\\\: \\\\\n\\\: \\\""
 end
 
