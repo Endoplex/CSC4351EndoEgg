@@ -1,6 +1,0 @@
-/* error : formals are more then actuals */
-let
-	int g (a:int , b:string) { a }
-in
-	g("one")
-end
