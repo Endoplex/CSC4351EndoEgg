@@ -127,13 +127,14 @@ WHITESPACE = [\n\ \t\r\b\012]
 
 <YYINITIAL> { 
   \" {yybegin(STRING); sb = new StringBuffer();}
-
-  \\ { yybegin(IGNORE);} 
-    <IGNORE> {
-      \n {newline();}
-      {WHITESPACE} {}
-      \\ {yybegin(STRING);}
-    }
+  <COMMENT> { 
+    "/*" {nestDepth++;}
+    \n	  {newline(); }
+    . {}
+    "*/" {  nestDepth--; 
+            if(nestDepth == 0) { yybegin(YYINITIAL); }
+            else if(nestDepth < 0) { err("Illegal closing comment"); }
+          }
 
   <STRING> { 
     \\n {sb.append(yytext('\\n')); }
@@ -143,20 +144,18 @@ WHITESPACE = [\n\ \t\r\b\012]
     {ASCII} { int c = yytext(); sb.append((char) c); }
     {TEXT} {return tok(sym.STRING, yytext()); }
     \" {System.out.print(sb.toString()); yybegin(YYINITIAL); }
-    
-
-    "/*" {yybegin(COMMENT); nestDepth = 1;}
-    <COMMENT> { 
-      "/*" {nestDepth++;}
-      \n	  {newline(); }
-      . {}
-      "*/" {  nestDepth--; 
-              if(nestDepth == 0) { yybegin(YYINITIAL); }
-              else if(nestDepth < 0) { err("Illegal closing comment"); }
-            }
     }
+
+    \\ { yybegin(IGNORE);} 
+    <IGNORE> {
+      \n {newline();}
+      {WHITESPACE} {}
+      \\ {yybegin(STRING);}
+    }
+  "/*" {yybegin(COMMENT); nestDepth = 1;}
   }
 }
 
+. { err("Illegal character: " + yytext()); }
 
 . { err("Illegal character: " + yytext()); }
