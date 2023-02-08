@@ -30,3 +30,7 @@ Output:
 Output of merge.tig when output to a .out file
   
 ![image](https://user-images.githubusercontent.com/76065821/217423248-b70ffa2d-8656-4ad8-83a6-592aae97cf6d.png)
+
+  
+  
+ 
