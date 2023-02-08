@@ -16,3 +16,12 @@ output of merge.tig
 
   
   
+# Handling Strings 
+
+Input from merge.tig: 
+
+![image](https://user-images.githubusercontent.com/76065821/217417286-ab5fbcec-0c80-4e9e-8ca7-7f0bb47688e8.png)
+
+Output: 
+
+![image](https://user-images.githubusercontent.com/76065821/217417391-48ea460a-bea2-41e4-97da-fb0944f5b92b.png)
