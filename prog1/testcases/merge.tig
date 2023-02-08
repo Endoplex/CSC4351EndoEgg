@@ -64,5 +64,8 @@ int readint(any: any) {
  var string := "This is a test \n\\n: \n\\t:\t[]\n\\\\: \\\\"
  var string := "Testing control char:\n\^c: ^c\n\^b: ^b"
  var string := "Testing ignore: \\fAIOSoifnspdifjsf\\"
+  /* Testing Comments
+ * nested AF
+ */ "testing for bugs"
 end
 
