@@ -126,7 +126,7 @@ WHITESPACE = [\n\ \t\r\b\012]
 <YYINITIAL> {ID}   {return tok(sym.ID, yytext());}
 
 <YYINITIAL> { 
-  \" {yybegin(STRING); sb = new StringBuffer();}
+  "/*" {yybegin(COMMENT); nestDepth = 1;}
   <COMMENT> { 
     "/*" {nestDepth++;}
     \n	  {newline(); }
@@ -135,7 +135,7 @@ WHITESPACE = [\n\ \t\r\b\012]
             if(nestDepth == 0) { yybegin(YYINITIAL); }
             else if(nestDepth < 0) { err("Illegal closing comment"); }
           }
-
+  \" {yybegin(STRING); sb = new StringBuffer();}
   <STRING> { 
     \\n {sb.append(yytext('\\n')); }
     \\t {sb.append('\\t'); }
@@ -152,7 +152,6 @@ WHITESPACE = [\n\ \t\r\b\012]
       {WHITESPACE} {}
       \\ {yybegin(STRING);}
     }
-  "/*" {yybegin(COMMENT); nestDepth = 1;}
   }
 }
 
