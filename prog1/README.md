@@ -25,3 +25,5 @@ Input from merge.tig:
 Output: 
 
 ![image](https://user-images.githubusercontent.com/76065821/217417391-48ea460a-bea2-41e4-97da-fb0944f5b92b.png)
+
+  Errors: String creates an error sometimes when using the newline character.
