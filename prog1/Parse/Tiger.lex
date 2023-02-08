@@ -127,12 +127,10 @@ WHITESPACE = [\n\ \t\r\b\012]
 
 <YYINITIAL> { 
   \" {yybegin(STRING); sb = new StringBuffer();}
-  
+
   \\ { yybegin(IGNORE);} 
     <IGNORE> {
-      {TEXT} {}
-      {ASCII} {}
-      {CONTROL} {}
+      \n {newline();}
       {WHITESPACE} {}
       \\ {yybegin(STRING);}
     }
